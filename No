@@ -1,0 +1,252 @@
+1) // Define LED pins
+const int led1 = 11;
+const int led2 = 12;
+const int led3 = 13;
+void setup() {
+    // Initialize LED pins as output
+    pinMode(led1, OUTPUT);
+    pinMode(led2, OUTPUT);
+    pinMode(led3, OUTPUT);
+}
+void loop() {
+    // Turn on LED 1 for 1 second
+    digitalWrite(led1, HIGH);
+    delay(1000); // 1000 milliseconds = 1 second
+    digitalWrite(led1, LOW);
+    // Turn on LED 2 for 2 seconds
+    digitalWrite(led2, HIGH);
+    delay(2000); // 2000 milliseconds = 2 seconds
+    digitalWrite(led2, LOW);
+    // Turn on LED 3 for 3 seconds
+    digitalWrite(led3, HIGH);
+    delay(3000); // 3000 milliseconds = 3 seconds
+    digitalWrite(led3, LOW);
+}
+2)
+#include <PulseSensorPlayground.h>
+
+// Create an instance of the PulseSensorPlayground class
+PulseSensorPlayground pulseSensor;
+
+const int pulsePin = A0; // Analog pin where the pulse sensor is connected
+
+void setup() {
+  Serial.begin(9600);
+
+  // Initialize the PulseSensorPlayground library
+  pulseSensor.analogInput(pulsePin);
+  pulseSensor.setThreshold(550); // Set the threshold for detecting beats
+  pulseSensor.begin();
+}
+
+void loop() {
+  // Read the value from the sensor
+  int signal = pulseSensor.getBeatsPerMinute();
+ 
+  // Print the heart rate if it is valid
+  if (signal > 0) {
+    Serial.print("Heart Rate: ");
+    Serial.print(signal);
+    Serial.println(" bpm");
+  } else {
+    Serial.println("No pulse detected.");
+  }
+
+  // Delay for 1 second
+  delay(1000);
+}
+3)
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+    lcd.begin();
+    lcd.backlight();
+    // Print initial message
+    lcd.setCursor(0, 0);
+    lcd.print("System Monitor");
+    lcd.setCursor(0, 1);
+    lcd.print("Initializing...");
+    delay(2000);
+}
+
+void loop() {
+    // Update system stats
+    float networkUtilization = getNetworkUtilization();
+    float cpuLoad = getCPULoad();
+    float diskSpace = getDiskSpace();
+    // Display system stats on LCD
+    lcd.clear(); // Clear the LCD screen
+    lcd.setCursor(0, 0);
+    lcd.print("Network: ");
+    lcd.print(networkUtilization);
+    lcd.print("%");
+    lcd.setCursor(0, 1);
+    lcd.print("CPU: ");
+    lcd.print(cpuLoad);
+    lcd.print("% Disk: ");
+    lcd.print(diskSpace);
+    lcd.print("GB");
+    delay(5000); // Delay for 5 seconds before updating again
+}
+
+// Function to get network utilization
+float getNetworkUtilization() {
+// Implement your code to get network utilization
+return 50.5; // Placeholder value for demonstration
+}
+
+// Function to get CPU load
+float getCPULoad() {
+// Implement your code to get CPU load
+return 30.2; // Placeholder value for demonstration
+}
+// Function to get disk space
+float getDiskSpace() {
+// Implement your code to get disk space
+return 25.7; // Placeholder value for demonstration
+}
+4).
+// Define pin numbers
+const int gasPin = A0;
+const int ledPin = 8;
+void setup() {
+    Serial.begin(9600); // Initialize serial communication
+    pinMode(ledPin, OUTPUT); // Set LED pin as output
+}
+void loop() {
+    // Read gas sensor value
+    int gasValue = analogRead(gasPin);
+    // Map gas sensor value to LED brightness
+    int brightness = map(gasValue, 0, 1023, 0, 255);
+    // Display gas sensor value on serial monitor
+    Serial.print("Gas Level: ");
+    Serial.println(gasValue);
+    // Turn on LED based on gas sensor value
+    analogWrite(ledPin, brightness);
+    delay(1000); // Delay for 1 second
+}
+
+5)
+import RPi.GPIO as GPIO
+import time
+pir=11
+led=13
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(pir, GPIO.IN)
+GPIO.setup(led, GPIO.OUT)
+try:
+    while True:
+             
+           if GPIO.input(pir):
+              print("Motion")
+              GPIO.output(led,GPIO.HIGH)
+           else:
+               print("No motion")
+               GPIO.output(led,GPIO.LOW)
+           time.sleep(2)
+except KeyboardInterrupt:
+      print("exit")
+finally:
+    GPIO.cleanup()
+
+6) 
+import time
+import adafruit_dht
+import board
+
+dht = adafruit_dht.DHT11(board.D4)  
+
+while True:
+   
+        temperature = dht.temperature
+        humidity = dht.humidity
+
+        print(f'Temperature: {temperature:.1f}C')
+        print(f'Humidity: {humidity:.1f}%')
+   
+        time.sleep(2)
+
+7)
+import RPi.GPIO as GPIO
+import smtplib
+from email.mime.text import MIMEText
+import time
+
+EMAIL_ADDRESS = ''  
+EMAIL_PASSWORD = ''  
+TO_EMAIL = ''    
+
+SENSOR_PIN = 11  
+BUZ_PIN = 13    
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(SENSOR_PIN, GPIO.IN)
+GPIO.setup(BUZ_PIN, GPIO.OUT)
+
+def send_email():
+    msg = MIMEText('Rain/Water detected!')
+    msg['Subject'] = 'Alert: Rain/Water Detected'
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = TO_EMAIL
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+            print("Email sent successfully")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+try:
+    print("Rain/Water Sensor Test")
+    time.sleep(2)  
+    print("Ready")
+
+    while True:
+        if not GPIO.input(SENSOR_PIN):  
+            print("Rain/Water detected!")
+            GPIO.output(BUZ_PIN, GPIO.HIGH)
+            send_email()
+            time.sleep(5)  
+        else:
+            GPIO.output(BUZ_PIN, GPIO.LOW)  
+
+except KeyboardInterrupt:
+    print("Program terminated")
+finally:
+    GPIO.cleanup()
+
+8)
+import RPi.GPIO as GPIO
+import requests
+import time
+
+api_key = " "
+#channel_id = " "
+
+LDR_PIN = 7
+LED_PIN = 13
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LDR_PIN, GPIO.IN)
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+try:
+    while True:
+        ldr_value = GPIO.input(LDR_PIN)
+        GPIO.output(LED_PIN, ldr_value)
+        params = {'api_key': api_key, 'field1': ldr_value}
+        try:
+            response = requests.get(f"https://api.thingspeak.com/update", params=params)
+            print(f"LDR Value: {ldr_value}, LED State: {'ON' if ldr_value else 'OFF'}, Response: {response.text}")
+        except Exception as e:
+            print("Failed to update ThingSpeak:", e)
+        time.sleep(5)
+except KeyboardInterrupt:
+    GPIO.cleanup()
+finally:
+    GPIO.cleanup()

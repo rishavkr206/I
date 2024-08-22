@@ -190,6 +190,22 @@ while True:
    
         time.sleep(2)
 
+/* sudo apt update && sudo apt upgrade 
+cd  Desktop 
+mkdir dht_test 
+cd  Desktop/dht_test
+python3 -m venv myenv  
+source myenv/bin/activate
+python3 -m pip install adafruit-circuitpython-dht
+
+nano xyz.py
+// type the program
+and run it 
+or 
+go to the dht_text folder click right open thonny 
+then code run check terminal
+
+*/
 7)
 import RPi.GPIO as GPIO
 import smtplib
